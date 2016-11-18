@@ -47,9 +47,10 @@ begin
 		  begin
 	        ALUout <=A+B;
 		  end
-		3'd1: //sub
+			3'd1: //sub
 		  begin
-		    //define sub behavior here
+					ALUout <=A-B;
+				//define sub behavior here
 		  end
 	  endcase
 	end
