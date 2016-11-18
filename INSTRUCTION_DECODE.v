@@ -68,6 +68,8 @@ begin
 				  end
 				6'd34://sub
 				  begin
+								B <=REG[IR[20:16]];
+								RD	<=IR[15:11];
 					//define sub behavior here
 					ALUctr <=3'd1;//self define ALUctr value
 				  end
