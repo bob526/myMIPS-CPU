@@ -17,9 +17,11 @@ wire [31:0] FD_PC, FD_IR;
 wire [31:0] A, B;
 wire [4:0] DX_RD;
 wire [2:0] ALUctr;
+wire DX_lwFlag;
 // EXECUTION wires
 wire [31:0] XM_ALUout;
 wire [4:0] XM_RD;
+wire XM_lwFlag;
 // DATA_MEMORY wires
 wire [31:0] MW_ALUout;
 wire [4:0]	MW_RD;
@@ -47,7 +49,8 @@ INSTRUCTION_DECODE ID(
 	.A(A),
 	.B(B),
 	.RD(DX_RD),
-	.ALUctr(ALUctr)
+	.ALUctr(ALUctr),
+	.DX_lwFlag(DX_lwFlag)
 );
 
 /*==============================     EXECUTION  	==============================*/
@@ -59,10 +62,12 @@ EXECUTION EXE(
 	.B(B),
 	.DX_RD(DX_RD),
 	.ALUctr(ALUctr),
+	.DX_lwFlag(DX_lwFlag),
 
 
 	.ALUout(XM_ALUout),
-	.XM_RD(XM_RD)
+	.XM_RD(XM_RD),
+	.XM_lwFlag(XM_lwFlag)
 );
 
 /*==============================     DATA_MEMORY	==============================*/
@@ -72,6 +77,7 @@ MEMORY MEM(
 	.rst(rst),
 	.ALUout(XM_ALUout),
 	.XM_RD(XM_RD),
+	.XM_lwFlag(XM_lwFlag),
 
 	.MW_ALUout(MW_ALUout),
 	.MW_RD(MW_RD)
