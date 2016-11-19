@@ -52,6 +52,17 @@ begin
 					ALUout <=A-B;
 				//define sub behavior here
 		  end
+			3'd2:	//slt
+			begin
+					if (A<B)
+					begin
+							ALUout <=32'd1;
+					end
+					else
+					begin
+							ALUout <=32'd0;
+					end
+			end
 	  endcase
 	end
 end
