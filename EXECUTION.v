@@ -8,21 +8,23 @@ module EXECUTION(
 	DX_RD,
 	ALUctr,
 	DX_lwFlag,
+	DX_swFlag,
 	
 	ALUout,
 	XM_RD,
-	XM_lwFlag
+	XM_lwFlag,
+	XM_swFlag
 );
 
 input clk,rst,ALUop;
 input [31:0] A,B;
 input [4:0]DX_RD;
 input [2:0] ALUctr;
-input DX_lwFlag;
+input DX_lwFlag, DX_swFlag;
 
 output reg [31:0]ALUout;
 output reg [4:0]XM_RD;
-output reg XM_lwFlag;
+output reg XM_lwFlag, XM_swFlag;
 
 //set pipeline register
 always @(posedge clk or posedge rst)
@@ -31,11 +33,13 @@ begin
     begin
 	  XM_RD	<= 5'd0;
 		XM_lwFlag <=1'b0;
+		XM_swFlag <=1'b0;
 	end 
   else 
 	begin
 	  XM_RD <= DX_RD;
 		XM_lwFlag <= DX_lwFlag;
+		XM_swFlag <= DX_swFlag;
 	end
 end
 
