@@ -6,6 +6,7 @@ module MEMORY(
 	ALUout,
 	XM_RD,
 	XM_lwFlag,
+	XM_swFlag,
 	
 	MW_ALUout,
 	MW_RD
@@ -13,7 +14,7 @@ module MEMORY(
 input clk, rst;
 input [31:0] ALUout;
 input [4:0] XM_RD;
-input XM_lwFlag;
+input XM_lwFlag, XM_swFlag;
 
 output reg [31:0] MW_ALUout;
 output reg [4:0] MW_RD;
@@ -38,9 +39,16 @@ begin
 	end
 	else if (XM_lwFlag)
 	begin
-		$display("Do you enter here?");
-		MW_ALUout	<=	DM[ALUout];
+		MW_ALUout	<=	DM[ALUout];		//Access data
 	  MW_RD		<=	XM_RD;
+	end
+	else if (XM_swFlag)
+	begin
+		DM[ALUout] <= XM_RD;		//Store data to data memory.
+		//Wrong, I should get the reg number RD 's value and write to DM
+		MW_ALUout <= ALUout;
+		MW_RD <=5'b0;
+		$display("Hello?? XM_RD=%d ALUout=%d DM[ALUout]=%d\n",XM_RD,ALUout,DM[ALUout]);
 	end
   else
     begin
