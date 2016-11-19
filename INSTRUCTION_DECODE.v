@@ -11,7 +11,8 @@ module INSTRUCTION_DECODE(
 	A,
 	B,
 	RD,
-	ALUctr
+	ALUctr,
+	DX_lwFlag
 );
 
 input clk,rst;
@@ -21,6 +22,7 @@ input [4:0] MW_RD;
 output reg [31:0] A, B;
 output reg [4:0] RD;
 output reg [2:0] ALUctr;
+output reg DX_lwFlag;
 
 //register file
 reg [31:0] REG [0:31];
@@ -53,6 +55,7 @@ begin
 		B 		<=32'b0;
 		RD 		<=5'b0;
 		ALUctr 	<=3'b0;
+		DX_lwFlag	<=1'b0;
 	  end 
 	else 
 	  begin
@@ -64,12 +67,14 @@ begin
 				  begin
 		            B	<=REG[IR[20:16]];
 		            RD	<=IR[15:11];
+								DX_lwFlag <=1'b0;
 					ALUctr <=3'd0;//self define ALUctr value
 				  end
 				6'd34://sub
 				  begin
 								B <=REG[IR[20:16]];
 								RD	<=IR[15:11];
+								DX_lwFlag <=1'b0;
 					//define sub behavior here
 					ALUctr <=3'd1;//self define ALUctr value
 				  end
@@ -78,12 +83,17 @@ begin
 							B <=REG[IR[20:16]];
 							RD	<=IR[15:11];
 							ALUctr <=3'd2;
+							DX_lwFlag <=1'b0;
 					//define slt behavior here
 				  end
 			  endcase
 			end
 	      6'd35://lw
 			begin
+				B <=IR[15:0];
+				RD <=IR[20:16];
+				ALUctr <=3'd0;
+				DX_lwFlag <=1'b1;
 			  //define lw behavior here
 			end
 	      6'd43://sw
