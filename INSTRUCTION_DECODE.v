@@ -75,6 +75,9 @@ begin
 				  end
 				6'd42://slt
 				  begin
+							B <=REG[IR[20:16]];
+							RD	<=IR[15:11];
+							ALUctr <=3'd2;
 					//define slt behavior here
 				  end
 			  endcase
