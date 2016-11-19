@@ -15,3 +15,4 @@ $2 = 00010 = 2 (decimal)
 ### In decode
 B <=REG[IR[20:16]];
 What does "REG" mean?   -> Simulated regesters(r0~r31)??
+The indent of sample code is awful.
