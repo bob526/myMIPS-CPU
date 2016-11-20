@@ -7,7 +7,7 @@ module INSTRUCTION_DECODE(
 	PC,
 	MW_RD,
 	MW_ALUout,
-	
+
 	A,
 	B,
 	RD,
@@ -35,31 +35,31 @@ always @(posedge clk)//add new Dst REG source here
 	else
 	  REG[MW_RD] <= REG[MW_RD];//keep REG[0] always equal zero
 
-//set A, and other register content(j/beq flag and address)	
+//set A, and other register content(j/beq flag and address)
 always @(posedge clk or posedge rst)
 begin
-	if(rst) 
+	if(rst)
 	  begin
 	    A 	<=32'b0;
-	  end 
-	else 
+	  end
+	else
 	  begin
 	    A 	<=REG[IR[25:21]];
 	  end
 end
 
-//set control signal, choose Dst REG, and set B	
+//set control signal, choose Dst REG, and set B
 always @(posedge clk or posedge rst)
 begin
-	if(rst) 
+	if(rst)
 	  begin
 		B 		<=32'b0;
 		RD 		<=5'b0;
 		ALUctr 	<=3'b0;
 		DX_lwFlag	<=1'b0;
 		DX_swFlag <=1'b0;
-	  end 
-	else 
+	  end
+	else
 	  begin
 	    case(IR[31:26])
 		  6'd0://R-Type
@@ -105,7 +105,7 @@ begin
 	      6'd43://sw
 			begin
 				B <=IR[15:0];		//Immediate value
-				RD <=IR[20:16];
+				RD <=REG[IR[20:16]];
 				ALUctr <=3'd0;
 				DX_lwFlag <=1'b0;
 				DX_swFlag <=1'b1;
