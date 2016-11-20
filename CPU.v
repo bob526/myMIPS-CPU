@@ -19,20 +19,26 @@ wire [4:0] DX_RD;
 wire [2:0] ALUctr;
 wire DX_lwFlag;
 wire DX_swFlag;
+wire [2:0] DX_compareFlag;
+wire [31:0] DX_PC;
 // EXECUTION wires
 wire [31:0] XM_ALUout;
 wire [4:0] XM_RD;
 wire XM_lwFlag;
 wire XM_swFlag;
+wire [2:0] XM_compareFlag;
+wire [31:0] XF_ALUout;
 // DATA_MEMORY wires
 wire [31:0] MW_ALUout;
 wire [4:0]	MW_RD;
+wire [2:0] MW_compareFlag;
 
 /*============================== INSTRUCTION_FETCH  ==============================*/
 
 INSTRUCTION_FETCH IF(
 	.clk(clk),
 	.rst(rst),
+	.XF_ALUout(XF_ALUout),
 
 	.PC(FD_PC),
 	.IR(FD_IR)
@@ -47,13 +53,16 @@ INSTRUCTION_DECODE ID(
 	.IR(FD_IR),
 	.MW_RD(MW_RD),
 	.MW_ALUout(MW_ALUout),
+	.MW_compareFlag(MW_compareFlag),
 
 	.A(A),
 	.B(B),
 	.RD(DX_RD),
 	.ALUctr(ALUctr),
 	.DX_lwFlag(DX_lwFlag),
-	.DX_swFlag(DX_swFlag)
+	.DX_swFlag(DX_swFlag),
+	.DX_compareFlag(DX_compareFlag),
+	.DX_PC(DX_PC)
 );
 
 /*==============================     EXECUTION  	==============================*/
@@ -67,12 +76,16 @@ EXECUTION EXE(
 	.ALUctr(ALUctr),
 	.DX_lwFlag(DX_lwFlag),
 	.DX_swFlag(DX_swFlag),
+	.DX_compareFlag(DX_compareFlag),
+	.DX_PC(DX_PC),
 
 
 	.ALUout(XM_ALUout),
 	.XM_RD(XM_RD),
 	.XM_lwFlag(XM_lwFlag),
-	.XM_swFlag(XM_swFlag)
+	.XM_swFlag(XM_swFlag),
+	.XM_compareFlag(XM_compareFlag),
+	.XF_ALUout(XF_ALUout)
 );
 
 /*==============================     DATA_MEMORY	==============================*/
@@ -84,9 +97,11 @@ MEMORY MEM(
 	.XM_RD(XM_RD),
 	.XM_lwFlag(XM_lwFlag),
 	.XM_swFlag(XM_swFlag),
+	.XM_compareFlag(XM_compareFlag),
 
 	.MW_ALUout(MW_ALUout),
-	.MW_RD(MW_RD)
+	.MW_RD(MW_RD),
+	.MW_compareFlag(MW_compareFlag)
 );
 
 endmodule
