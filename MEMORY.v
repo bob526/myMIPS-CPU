@@ -7,7 +7,7 @@ module MEMORY(
 	XM_RD,
 	XM_lwFlag,
 	XM_swFlag,
-	
+
 	MW_ALUout,
 	MW_RD
 );
@@ -45,10 +45,8 @@ begin
 	else if (XM_swFlag)
 	begin
 		DM[ALUout] <= XM_RD;		//Store data to data memory.
-		//Wrong, I should get the reg number RD 's value and write to DM
 		MW_ALUout <= ALUout;
 		MW_RD <=5'b0;
-		$display("Hello?? XM_RD=%d ALUout=%d DM[ALUout]=%d\n",XM_RD,ALUout,DM[ALUout]);
 	end
   else
     begin
