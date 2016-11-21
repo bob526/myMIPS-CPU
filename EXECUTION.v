@@ -74,13 +74,12 @@ begin
 					XF_ALUout <= 32'd0;
 				//define sub behavior here
 		  end
-			3'd2:	//opcode about combare
+			3'd2:	//opcode about combare and jump
 			begin
 				$display("Do you enter here DX_compareFlag=%d?\n",DX_compareFlag);
 				case(DX_compareFlag)
 					3'd0:	//slt
 					begin
-
 						if (A<B)
 						begin
 
@@ -102,6 +101,11 @@ begin
 							//Move PC forward "RD(offset)"<<2
 						end
 						//else do nothing
+					end
+					3'd2:		//j
+					begin
+						ALUout <= ((DX_PC & 32'hf0000000) | (B<<2));
+						XF_ALUout <= ((DX_PC & 32'hf0000000) | (B<<2));
 					end
 				endcase
 			end
