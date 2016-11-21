@@ -141,6 +141,12 @@ begin
 			end
 	      6'd2://j
 			begin
+				B <=IR[25:0];		//Target address must be positive, so I don't need to do 2's complement
+				RD <= 5'd0;
+				DX_lwFlag <=1'b0;
+				DX_swFlag <=1'b0;
+				DX_compareFlag <=3'd2;
+				ALUctr <=3'd2;
 			  //define j behavior here
 			end
 		endcase
