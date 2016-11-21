@@ -11,23 +11,25 @@ module EXECUTION(
 	DX_swFlag,
 	DX_compareFlag,
 	DX_PC,
+	DX_immediate,
 
 	ALUout,
 	XM_RD,
 	XM_lwFlag,
 	XM_swFlag,
 	XM_compareFlag,
-	XF_ALUout
+	XF_ALUout,
+	XM_immediate
 );
 
 input clk,rst,ALUop;
-input [31:0] A,B,DX_PC;
+input [31:0] A,B,DX_PC,DX_immediate;
 input [4:0]DX_RD;
 input [2:0] ALUctr;
 input DX_lwFlag, DX_swFlag;
 input [2:0] DX_compareFlag;
 
-output reg [31:0]ALUout, XF_ALUout;
+output reg [31:0]ALUout, XF_ALUout, XM_immediate;
 output reg [4:0]XM_RD;
 output reg XM_lwFlag, XM_swFlag;
 output reg [2:0] XM_compareFlag;
@@ -42,6 +44,7 @@ begin
 		XM_swFlag <=1'b0;
 		XM_compareFlag <=3'd0;
 		XF_ALUout <= 32'd0;
+		XM_immediate <=32'd0;
 	end
   else
 	begin
@@ -49,6 +52,7 @@ begin
 		XM_lwFlag <= DX_lwFlag;
 		XM_swFlag <= DX_swFlag;
 		XM_compareFlag <= DX_compareFlag;
+		XM_immediate <= DX_immediate;
 	end
 end
 
@@ -66,7 +70,7 @@ begin
 	    3'd0: //add //lw //sw
 		  begin
 	        ALUout <=A+B;
-			XF_ALUout <= 32'd0;
+					XF_ALUout <= 32'd0;
 		  end
 			3'd1: //sub
 		  begin
@@ -76,7 +80,6 @@ begin
 		  end
 			3'd2:	//opcode about combare and jump
 			begin
-				$display("Do you enter here DX_compareFlag=%d?\n",DX_compareFlag);
 				case(DX_compareFlag)
 					3'd0:	//slt
 					begin
@@ -94,10 +97,10 @@ begin
 					end
 					3'd1:	//beq
 					begin
-						if (A==DX_RD)
+						if (A==B)
 						begin
-							ALUout <=(DX_PC+(B<<2));
-							XF_ALUout <= (DX_PC+(B<<2));
+							ALUout <=(DX_PC+(DX_immediate<<2));
+							XF_ALUout <= (DX_PC+(DX_immediate<<2));
 							//Move PC forward "RD(offset)"<<2
 						end
 						//else do nothing
@@ -106,6 +109,14 @@ begin
 					begin
 						ALUout <= ((DX_PC & 32'hf0000000) | (B<<2));
 						XF_ALUout <= ((DX_PC & 32'hf0000000) | (B<<2));
+					end
+					3'd3:
+					begin
+						if (A!=B)
+						begin
+							ALUout <=(DX_PC+(DX_immediate<<2));
+							XF_ALUout <= (DX_PC+(DX_immediate<<2));
+						end
 					end
 				endcase
 			end
