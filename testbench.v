@@ -1,5 +1,5 @@
-`define CYCLE_TIME 60
-`define INSTRUCTION_NUMBERS 60
+`define CYCLE_TIME 66
+`define INSTRUCTION_NUMBERS 66
 `timescale 1ns/1ps
 `include "CPU.v"
 
@@ -10,30 +10,27 @@ reg [31:0] cycles, i;
 // Instruction DM initialilation
 initial
 begin
-		//cpu.IF.instruction[ 0] = 32'b000000_00001_00010_00011_00000_100000;	//add $3, $1, $2
-		//cpu.IF.instruction[ 1] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		//cpu.IF.instruction[ 2] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		//cpu.IF.instruction[ 3] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
+		for (i=0; i<46; i=i+1)	cpu.IF.instruction[ i] = 32'b000000_00000_00000_00000_00000_100000;
 		cpu.IF.instruction[ 0] = 32'b100011_00000_00011_00000_00000_000000;	//lw $3, $0
-		cpu.IF.instruction[ 1] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		cpu.IF.instruction[ 2] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		cpu.IF.instruction[ 3] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		cpu.IF.instruction[ 3] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		cpu.IF.instruction[ 4] = 32'b000000_00010_00011_00011_00000_100000;	//add $3, $2, $3
-		cpu.IF.instruction[ 5] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		cpu.IF.instruction[ 6] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		cpu.IF.instruction[ 7] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		cpu.IF.instruction[ 8] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		cpu.IF.instruction[ 9] = 32'b000010_00000_00000_00000_00000_000100;	//j 4
-		//cpu.IF.instruction[ 10] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		//cpu.IF.instruction[ 11] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		//cpu.IF.instruction[ 12] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		//cpu.IF.instruction[ 13] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		cpu.IF.instruction[ 13] = 32'b000000_00010_00011_00011_00000_101010;	//slt $3, $2, $3
-		cpu.IF.instruction[ 10] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		cpu.IF.instruction[ 11] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		cpu.IF.instruction[ 12] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
-		cpu.IF.instruction[ 14] = 32'b000000_00000_00000_00000_00000_100000;	//NOP(add $0, $0, $0)
+		cpu.IF.instruction[ 1] = 32'b100011_00001_00100_00000_00000_000000;	//lw $4, $1
+		
+		//Loop
+		cpu.IF.instruction[ 5] = 32'b000100_00011_00100_00000_00000_100011;	//beq $3, $4, Output->(41-6=35)
+		cpu.IF.instruction[ 9] = 32'b000100_00011_00000_00000_00000_001111;	//beq $3, $0(zero), swap(25-10=15)
+		cpu.IF.instruction[ 13] = 32'b000100_00100_00000_00000_00000_011011;	//beq $4, $0(zero), Output(41-14=27)
+		cpu.IF.instruction[ 17] = 32'b000000_00100_00011_00101_00000_101010;	//slt $5, $4, $3
+		cpu.IF.instruction[ 21] = 32'b000100_00101_00001_00000_00000_001011;	//beq $5, $1, minus(33-22=11)
+		//Swap
+		cpu.IF.instruction[ 25] = 32'b000000_00000_00011_00101_00000_100000;	//add $5, $0, $3
+		cpu.IF.instruction[ 26] = 32'b000000_00000_00100_00011_00000_100000;	//add $3, $0, $4
+		cpu.IF.instruction[ 29] = 32'b000000_00000_00101_00100_00000_100000;	//add $4, $0, $5
+		//Minus
+		cpu.IF.instruction[ 33] = 32'b000000_00011_00100_00011_00000_100010;	//sub $3, $3, $4
+		cpu.IF.instruction[ 37] = 32'b000101_00011_00100_11111_11111_011111;	//bne $3, $4, Loop(5-38=-33)
+		//Output
+		cpu.IF.instruction[ 41] = 32'b101011_00010_00011_00000_00000_000000;	//sw $3, $2
+
+
 		cpu.IF.PC = 0;
 end
 
