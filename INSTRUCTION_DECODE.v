@@ -16,7 +16,8 @@ module INSTRUCTION_DECODE(
 	DX_lwFlag,
 	DX_swFlag,
 	DX_compareFlag,
-	DX_PC
+	DX_PC,
+	DX_immediate
 );
 
 input clk,rst;
@@ -24,7 +25,7 @@ input [31:0]IR, PC, MW_ALUout;
 input [4:0] MW_RD;
 input [2:0] MW_compareFlag;
 
-output reg [31:0] A, B, DX_PC;
+output reg [31:0] A, B, DX_PC, DX_immediate;
 output reg [4:0] RD;
 output reg [2:0] ALUctr;
 output reg DX_lwFlag, DX_swFlag;
@@ -67,6 +68,7 @@ begin
 		DX_lwFlag	<=1'b0;
 		DX_swFlag <=1'b0;
 		DX_compareFlag <=3'd0;
+		DX_immediate <=32'd0;
 	  end
 	else
 	  begin
@@ -81,6 +83,7 @@ begin
 								DX_lwFlag <=1'b0;
 								DX_swFlag <=1'b0;
 								DX_compareFlag <=3'd0;
+								DX_immediate <=32'd0;
 					ALUctr <=3'd0;//self define ALUctr value
 				  end
 				6'd34://sub
@@ -90,6 +93,7 @@ begin
 								DX_lwFlag <=1'b0;
 								DX_swFlag <=1'b0;
 								DX_compareFlag <=3'd0;
+								DX_immediate <=32'd0;
 					//define sub behavior here
 					ALUctr <=3'd1;//self define ALUctr value
 				  end
@@ -101,6 +105,7 @@ begin
 							DX_lwFlag <=1'b0;
 							DX_swFlag <=1'b0;
 							DX_compareFlag <=3'd0; //In ALUctr=2, compareFlag=0->slt
+							DX_immediate <=32'd0;
 					//define slt behavior here
 				  end
 			  endcase
@@ -113,31 +118,47 @@ begin
 				DX_lwFlag <=1'b1;
 				DX_swFlag <=1'b0;
 				DX_compareFlag <=3'd0;
+				DX_immediate <=32'd0;	// This part is right, I don't want to change.
 			  //define lw behavior here
 			end
 	      6'd43://sw
 			begin
 				B <=IR[15:0];		//Immediate value
-				RD <=REG[IR[20:16]];
+				RD <=5'd0;
 				ALUctr <=3'd0;
 				DX_lwFlag <=1'b0;
 				DX_swFlag <=1'b1;
 				DX_compareFlag <=3'd0;
+				DX_immediate <=REG[IR[20:16]];	//Here it is base address.
 			  //define sw behavior here
 			end
 	      6'd4://beq
 			begin
 				if (IR[15]==1)
-					B <={16'b1111111111111111,IR[15:0]};
+					DX_immediate <={16'b1111111111111111,IR[15:0]};
 				else
-					B <={16'b0,IR[15:0]};
-				RD <=REG[IR[20:16]];	//Immediate value
+					DX_immediate <={16'b0,IR[15:0]};
+				B <=REG[IR[20:16]];	
+				RD <=5'b0;
 				DX_lwFlag <=1'b0;
 				DX_swFlag <=1'b0;
 				DX_compareFlag <=3'd1;
 				ALUctr <=3'd2;
 
 			  //define beq behavior here
+			end
+				6'd5:	//bne
+			begin
+				if (IR[15]==1)
+					DX_immediate <={16'b1111111111111111,IR[15:0]};
+				else
+					DX_immediate <={16'b0,IR[15:0]};
+				B <=REG[IR[20:16]];	
+				RD <=5'b0;
+				DX_lwFlag <=1'b0;
+				DX_swFlag <=1'b0;
+				DX_compareFlag <=3'd3;
+				ALUctr <=3'd2;
 			end
 	      6'd2://j
 			begin
@@ -147,6 +168,7 @@ begin
 				DX_swFlag <=1'b0;
 				DX_compareFlag <=3'd2;
 				ALUctr <=3'd2;
+				DX_immediate <=32'd0;	//It doesn't matter, because I use B in j type as immediate.
 			  //define j behavior here
 			end
 		endcase
