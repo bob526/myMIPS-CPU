@@ -8,13 +8,14 @@ module MEMORY(
 	XM_lwFlag,
 	XM_swFlag,
 	XM_compareFlag,
+	XM_immediate,
 
 	MW_ALUout,
 	MW_RD,
 	MW_compareFlag
 );
 input clk, rst;
-input [31:0] ALUout;
+input [31:0] ALUout, XM_immediate;
 input [4:0] XM_RD;
 input XM_lwFlag, XM_swFlag;
 input [2:0] XM_compareFlag;
@@ -36,7 +37,6 @@ always @(posedge clk)
 //send to Dst REG: "load word from data memory" or  "ALUout"
 always @(posedge clk)
 begin
-	$display("In memory: ALUout = %d\n",ALUout);
   if(rst)
     begin
 	  MW_ALUout	<=	32'b0;
@@ -51,7 +51,7 @@ begin
 	end
 	else if (XM_swFlag)
 	begin
-		DM[ALUout] <= XM_RD;		//Store data to data memory.
+		DM[ALUout] <= XM_immediate;		//Store data to data memory.
 		MW_ALUout <= ALUout;
 		MW_RD <=5'b0;
 		MW_compareFlag <=MW_compareFlag;
